@@ -10,3 +10,4 @@ public class TaskTrackerApplication {
         SpringApplication.run(TaskTrackerApplication.class, args);
     }
 }
+

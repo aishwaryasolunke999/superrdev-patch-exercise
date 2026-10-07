@@ -27,19 +27,31 @@ public class TaskController {
         String searchTerm = "%" + query.toLowerCase() + "%";
 
         // Parse status filter
-        String normalizedStatus = null;
+       /* String normalizedStatus = null;
         if (status != null && !status.isEmpty()) {
             normalizedStatus = TaskStatus.valueOf(status.toUpperCase()).name();
+        }*/
+
+        String normalizedStatus = null;
+        if (status != null && !status.isBlank()) {
+            try {
+                normalizedStatus = TaskStatus.valueOf(status.trim().toUpperCase()).name();
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Invalid status: " + status));
+            }
         }
 
         // Query complexity estimation for logging
         int complexityScore = Math.max(0, 10 - query.length());
-        long queryWeight = complexityScore * 100L;
+
+        //REMOVE beacuse: It should respond instantly instead of taking about 1 second
+       /* long queryWeight = complexityScore * 100L;
         try {
             Thread.sleep(queryWeight);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        }
+        }*/
 
         System.out.println("[TaskController] q=\"" + query + "\" status=" + normalizedStatus
                 + " page=" + page + " pageSize=" + pageSize
@@ -48,6 +60,10 @@ public class TaskController {
         List<Task> allResults = taskRepository.searchTasks(searchTerm, normalizedStatus);
 
         int start = (page - 1) * pageSize;
+
+        page = Math.max(1, page);
+        pageSize = Math.min(Math.max(1, pageSize), 100);
+
         int end = Math.min(start + pageSize, allResults.size());
         List<Task> pageResults = (start < allResults.size())
                 ? allResults.subList(start, end)
