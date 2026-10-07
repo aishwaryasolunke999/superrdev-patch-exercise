@@ -18,4 +18,4 @@
 
 ## Tools used
 I used Claude to help locate the bugs and explain why they happen. 
-I applied and tested each fix myself (browser, API URLs, Network tab) and wrote the handwritten explanations myself. 
+I applied and tested each fix myself (browser, API URLs) and wrote the handwritten explanations myself. 
